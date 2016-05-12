@@ -127,6 +127,12 @@
             if (layerObj.icon) {
                 el.setAttribute('style', 'background-image: url(\'' + layerObj.icon + '\')');
             }
+            // test with new options
+            if (layerObj.options) {
+                console.log('new options detected');
+                var legendIconEl = L.DomUtil.create('div', 'leaflet-iconLayers-layerLegendIcon');
+                el.appendChild(legendIconEl);
+            }
             return el;
         },
         _createLayerElements: function() {
