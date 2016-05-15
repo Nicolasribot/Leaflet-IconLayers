@@ -2,7 +2,7 @@
 
 ![](demo.gif)
 
-Leaflet base layers switching control with icons ([example](https://scanex.github.com/Leaflet-IconLayers/examples))
+Leaflet base **and overlay** layers switching control with icons ([example](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
 *Requires Leaflet 0.7.3 or newer; IE9+*
 
@@ -15,7 +15,13 @@ Copy files from `src` dir and include them to your project.
 Basic usage:
 
 ```javascript
+// base layers switching
 L.control.iconLayers(layers).addTo(map);
+
+// overlays layers switching
+L.control.iconLayers(overlayLayers, {multi: true}).addTo(map);
+
+// 
 ```
 
 In order to interact with layers Leaflet-IconLayers uses an array of layer objects, that have following fields:
