@@ -129,8 +129,10 @@
             }
             // test with new options
             if (layerObj.options) {
-                console.log('new options detected');
+//                console.log('new options detected');
                 var legendIconEl = L.DomUtil.create('div', 'leaflet-iconLayers-layerLegendIcon');
+                // sets internal id to be able to retrieve it on legend click
+                legendIconEl.setAttribute('data-layerid', layerObj.id);
                 el.appendChild(legendIconEl);
             }
             return el;
@@ -178,11 +180,34 @@
             this.setActiveLayer(layer.layer);
             this.expand();
         },
+        _onLegendClick: function(e) {
+            e.stopPropagation();
+            var layerId = e.target.getAttribute('data-layerid');
+            var layer = this._layers[layerId];
+            
+            var legendClassName = 'leaflet-iconLayers-layerLegend';
+            // set in a div to align vertically
+            var div = L.DomUtil.create('div', '', this._container);
+            var img = L.DomUtil.create('img', legendClassName, div);
+            img.src = layer.options.legend;
+            img.alt = layer.options.legend;
+            console.log(img.src);
+            this._map.openPopup(
+                    img, 
+                    this._map.mouseEventToLatLng(e), 
+                    {autoPan: false, keepInView: true}
+            );
+        },
         _attachEvents: function() {
             each(this._layers, function(l) {
                 var e = this._getLayerCellByLayerId(l.id);
                 if (e) {
                     e.addEventListener('click', this._onLayerClick.bind(this));
+                    // legend click event
+                    if (e.getElementsByClassName('leaflet-iconLayers-layerLegendIcon')) {
+                        e.getElementsByClassName('leaflet-iconLayers-layerLegendIcon')[0]
+                                .addEventListener('click', this._onLegendClick.bind(this));
+                    }
                 }
             }.bind(this));
             var layersRowCollection = this._container.getElementsByClassName('leaflet-iconLayers-layersRow');
