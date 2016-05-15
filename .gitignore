@@ -5,3 +5,5 @@ bower_components
 dist
 *_bundle.js
 *.log
+/nbproject/private/
+/nbproject/
