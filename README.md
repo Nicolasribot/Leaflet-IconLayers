@@ -2,6 +2,8 @@
 
 ![](demo.gif)
 
+![](demo-multi1.gif)
+
 Leaflet base **and overlay** layers switching control with icons ([example](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
 Displays layer icon and legend directly from WMS server if used with leaflet.wms (fork)
