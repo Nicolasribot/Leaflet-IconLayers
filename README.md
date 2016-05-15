@@ -42,8 +42,9 @@ The second constructor argument may be `options` hash. It is also ok if it is th
 
 - `maxLayersInRow` - the number of layers, that a row can contain
 - `manageLayers` - by default control manages map layers. Pass `false` if you want to manage layers manually.
-- `multi` - Pass `true` if you want to manage overlay layers: multiple selection of layers, fixed layers positions. Default to `false`
+- `multi` - Multiple selection mode. Pass `true` if you want to manage overlay layers: multi-selection of layers with fixed layers positions in the component. Default to `false`
 - `behavior` - the behavior controlling layers display. `previous` (default): previous layer is always displayed. `nochange`: layers are not reordered and displayed in the defined order. (Default mode if `multi=true`)
+- `theme` - the layer icon background color. Default to '#FFF'. Pass `'transparent'` to remove background. (useful for layers with transparent icons, like WMS layers)
 
 plus `L.Control` options (`position`)
 
@@ -102,7 +103,8 @@ wmsSource.addTo(map).loadFromWMS(function () {
     var opt = {
         multi: true,
         position: 'bottomleft',
-        maxLayersInRow: 3
+        maxLayersInRow: 3,
+        theme: '#707070'
     };
     L.control.iconLayers(this.getLayersForControl(), opt).addTo(map);
 });
