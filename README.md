@@ -17,10 +17,8 @@ Basic usage:
 ```javascript
 // base layers switching
 L.control.iconLayers(layers).addTo(map);
-
 // overlays layers switching
 L.control.iconLayers(overlayLayers, {multi: true}).addTo(map);
-
 // 
 ```
 
@@ -28,6 +26,8 @@ In order to interact with layers Leaflet-IconLayers uses an array of layer objec
 - `icon` - icon url (typically 80x80)
 - `title` - a short string that is displayed at the bottom of each icon
 - `layer` - any Leaflet `ILayer`
+- `options` - an optional object with currently one field: legend: the legend URL. Ex: `{legend: '/path/to/the/legend.png'}`
+
 
 You can pass this array to construtor or use `setLayers` method.
 
