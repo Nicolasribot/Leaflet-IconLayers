@@ -4,6 +4,8 @@
 
 Leaflet base **and overlay** layers switching control with icons ([example](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
+Displays layer icon and legend directly from WMS server if used with leaflet.wms (fork)
+
 *Requires Leaflet 0.7.3 or newer; IE9+*
 
 Extends `L.Control`.
@@ -17,6 +19,7 @@ Basic usage:
 ```javascript
 // base layers switching
 L.control.iconLayers(layers).addTo(map);
+
 // overlays layers switching
 L.control.iconLayers(overlayLayers, {multi: true}).addTo(map);
 // 
@@ -37,6 +40,8 @@ The second constructor argument may be `options` hash. It is also ok if it is th
 
 - `maxLayersInRow` - the number of layers, that a row can contain
 - `manageLayers` - by default control manages map layers. Pass `false` if you want to manage layers manually.
+- `multi` - Pass `true` if you want to manage overlay layers: multiple selection of layers, fixed layers positions. Default to `false`
+- `behavior` - the behavior controlling layers display. `previous` (default): previous layer is always displayed. `nochange`: layers are not reordered and displayed in the defined order. (Default mode if `multi=true`)
 
 plus `L.Control` options (`position`)
 
@@ -82,5 +87,21 @@ iconLayersControl.setLayers(layers);
 
 iconLayersControl.on('activelayerchange', function(e) {
     console.log('layer switched', e.layer);
+});
+
+// Advanced usage: 
+// leaflet.wms (fork) WMS layers switching, with legends and layer icons available from WMS server.
+// leaflet.wms is configured in auto mode: layers are loaded from getCapabilities WMS request
+wmsSource = L.WMS.source(
+"http://demo.opengeo.org/geoserver/wms?", {
+    'format': 'image/png'}
+);
+wmsSource.addTo(map).loadFromWMS(function () {
+    var opt = {
+        multi: true,
+        position: 'bottomleft',
+        maxLayersInRow: 3
+    };
+    L.control.iconLayers(this.getLayersForControl(), opt).addTo(map);
 });
 ```
