@@ -232,11 +232,12 @@
             // manages multi mode: toggles check element
             if (this.options.multi === true) {
                 var idx = this._selectedLayers.indexOf(Number(layerId));
+                console.log('clicked on: ' + layerId + ' (prev checked: ' + (idx > -1));
                 if (idx > -1) {
-//                    console.log('removing: ' + layerId);
+                    console.log('removing: ' + layerId);
                     this._selectedLayers.splice(idx, 1);
                 } else {
-//                    console.log('pushing: ' + layerId);
+                    console.log('pushing: ' + layerId);
                     this._selectedLayers.push(Number(layerId));
                 }
             }
@@ -260,6 +261,7 @@
                     this._map.mouseEventToLatLng(e), 
                     {autoPan: true, keepInView: true, maxHeight: 200}
             );
+            this.collapse();
         },
         _attachEvents: function() {
             each(this._layers, function(l) {
@@ -411,11 +413,15 @@
         },
         setActiveLayer: function(layer) {
             var l = layer && this._layers[L.stamp(layer)];
-            if (!l || l.id === this._activeLayerId) {
+            if (!l || (this.options.multi === false && l.id === this._activeLayerId)) {
                 return;
             }
-            this._previousLayerId = this._activeLayerId;
-            this._activeLayerId = l.id;
+                        // multi mode
+            if (l && this.options.multi === false) {
+                this._previousLayerId = this._activeLayerId;
+                this._activeLayerId = l.id;
+            }
+
             if (this._container) {
                 this._render();
             }
