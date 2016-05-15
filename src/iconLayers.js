@@ -129,6 +129,7 @@
         },
         _createLayerElement: function(layerObj) {
             var el = L.DomUtil.create('div', 'leaflet-iconLayers-layer');
+            
             if (layerObj.title) {
                 var titleContainerEl = L.DomUtil.create('div', 'leaflet-iconLayers-layerTitleContainer');
                 var titleEl = L.DomUtil.create('div', 'leaflet-iconLayers-layerTitle');
@@ -139,7 +140,9 @@
                 el.appendChild(checkIconEl);
             }
             if (layerObj.icon) {
-                el.setAttribute('style', 'background-image: url(\'' + layerObj.icon + '\')');
+                // new theme bg property
+                el.setAttribute('style', 'background-image: url(\'' + layerObj.icon + '\');' 
+                        + 'background-color: ' + this.options.theme);
             }
             // test with new options
             if (layerObj.options) {
@@ -348,7 +351,9 @@
             autoZIndex: true, // from L.Control.Layers
             maxLayersInRow: 5,
             manageLayers: true,
-            multi: false // true: handles overlays: several checks possible
+            multi: false, // true: handles overlays: several checks possible
+            theme: '#fff' // bg color for layer icon, for ex: '#707070', 'transparent'
+            //(whose icons can be transparent)
         },
         initialize: function(layers, options) {
             if (!L.Util.isArray(arguments[0])) {

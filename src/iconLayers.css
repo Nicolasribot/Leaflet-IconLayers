@@ -16,13 +16,16 @@
     position: relative;
     width: 80px;
     height: 80px;
-    /*background-color: #fff;*/
-    background-color: #707070;
+    background-color: #fff;
     background-repeat: no-repeat;
     background-size: cover;
     text-align: center;
     box-sizing: border-box;
     box-shadow: 0 0 5px #000;
+}
+
+.leaflet-iconLayers-layer-darkula {
+    background-color: #707070;
 }
 
 .leaflet-iconLayers-layerTitleContainer {
