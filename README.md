@@ -4,6 +4,8 @@
 
 Leaflet base **and overlay** layers switching control with icons ([example](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
+Displays layer icon and legend directly from WMS server if used with leaflet.wms (fork)
+
 *Requires Leaflet 0.7.3 or newer; IE9+*
 
 Extends `L.Control`.
@@ -17,9 +19,29 @@ Basic usage:
 ```javascript
 // base layers switching
 L.control.iconLayers(layers).addTo(map);
+
 // overlays layers switching
 L.control.iconLayers(overlayLayers, {multi: true}).addTo(map);
 // 
+```
+
+Advanced usage: use with leaflet-wms fork to display WMS layers with their legends. GetFeatureInfo is available on map click for configured layers
+
+```javascript
+// leaflet.wms (fork) WMS layers switching, with legends and layer icons available from WMS server.
+// leaflet.wms is configured in auto mode: layers are loaded from getCapabilities WMS request
+wmsSource = L.WMS.source(
+"http://demo.opengeo.org/geoserver/wms?", {
+    'format': 'image/png'}
+);
+wmsSource.addTo(map).loadFromWMS(function () {
+    var opt = {
+        multi: true,
+        position: 'bottomleft',
+        maxLayersInRow: 3
+    };
+    L.control.iconLayers(this.getLayersForControl(), opt).addTo(map);
+});
 ```
 
 In order to interact with layers Leaflet-IconLayers uses an array of layer objects, that have following fields:
