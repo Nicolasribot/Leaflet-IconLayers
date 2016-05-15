@@ -16,7 +16,8 @@
     position: relative;
     width: 80px;
     height: 80px;
-    background-color: #fff;
+    /*background-color: #fff;*/
+    background-color: #707070;
     background-repeat: no-repeat;
     background-size: cover;
     text-align: center;
@@ -76,3 +77,16 @@
 .leaflet-iconLayers-layerCell_hidden { display: none; }
 .leaflet-iconLayers-layerCell_active .leaflet-iconLayers-layer { cursor: default; }
 .leaflet-iconLayers-layerCell_active .leaflet-iconLayers-layerCheckIcon { display: block; }
+
+/*test check icon with its own class*/
+.leaflet-iconLayers-layerCell_mutli .leaflet-iconLayers-layerCheckIcon { 
+    display: block; 
+    background: url('check.png'); 
+    background-repeat: no-repeat; 
+    background-position: 4px 4px;
+    background-color: #fff;
+}
+
+.leaflet-iconLayers-layerLegend { overflow: scroll; }
+
+.leaflet-popup-content { width:auto !important; }

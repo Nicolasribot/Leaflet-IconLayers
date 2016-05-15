@@ -103,6 +103,20 @@
                 }
                 return layers;
             };
+            behaviors.nochange = function() {
+                // returns all layers, allways sorted in the same order:
+                // TODO: sort properties changeable ondrag
+                var layers = this._getInactiveLayers();
+                if (this._getActiveLayer()) {
+                    layers = layers.concat(this._getActiveLayer());
+                }
+                if (this._getPreviousLayer()) {
+                    layers = layers.concat(this._getPreviousLayer());
+                }
+                return layers.sort(function(a, b) {
+                    return a.id < b.id;
+                });
+            };
             return behaviors[this.options.behavior].apply(this, arguments);
         },
         _getLayerCellByLayerId: function(id) {
@@ -173,10 +187,60 @@
                 }
             }
         },
+        _createMultiLayerElements: function() {
+            var layers = this._arrangeLayers();
+            for (var i = 0; i < layers.length; i++) {
+                if (i % this.options.maxLayersInRow === 0) {
+                    currentRow = L.DomUtil.create('div', 'leaflet-iconLayers-layersRow');
+                    if (this.options.position.indexOf('bottom') === -1) {
+                        this._container.appendChild(currentRow);
+                    } else {
+                        prepend(this._container, currentRow);
+                    }
+                }
+                layerCell = L.DomUtil.create('div', 'leaflet-iconLayers-layerCell');
+                layerCell.setAttribute('data-layerid', layers[i].id);
+                if (i !== 0) {
+                    L.DomUtil.addClass(layerCell, 'leaflet-iconLayers-layerCell_hidden');
+                }
+                // Manages new layers options: if options detected: Overlay 
+                if (this._selectedLayers.indexOf(layers[i].id) > -1) {
+                        // Applies check style for all selected layers
+                        //console.log('setting selected style for: ' + layers[i].id);
+                        L.DomUtil.addClass(layerCell, 'leaflet-iconLayers-layerCell_mutli');
+                }
+                if (this._expandDirection === 'left') {
+                    L.DomUtil.addClass(layerCell, 'leaflet-iconLayers-layerCell_expandLeft');
+                } else {
+                    L.DomUtil.addClass(layerCell, 'leaflet-iconLayers-layerCell_expandRight');
+                }
+                layerCell.appendChild(this._createLayerElement(layers[i]));
+
+                if (this.options.position.indexOf('right') === -1) {
+                    currentRow.appendChild(layerCell);
+                } else {
+                    prepend(currentRow, layerCell);
+                }
+            }
+            
+        },
         _onLayerClick: function(e) {
             e.stopPropagation();
             var layerId = e.currentTarget.getAttribute('data-layerid');
             var layer = this._layers[layerId];
+            
+            // manages multi mode: toggles check element
+            if (this.options.multi === true) {
+                var idx = this._selectedLayers.indexOf(Number(layerId));
+                if (idx > -1) {
+//                    console.log('removing: ' + layerId);
+                    this._selectedLayers.splice(idx, 1);
+                } else {
+//                    console.log('pushing: ' + layerId);
+                    this._selectedLayers.push(Number(layerId));
+                }
+            }
+            
             this.setActiveLayer(layer.layer);
             this.expand();
         },
@@ -187,15 +251,14 @@
             
             var legendClassName = 'leaflet-iconLayers-layerLegend';
             // set in a div to align vertically
-            var div = L.DomUtil.create('div', '', this._container);
-            var img = L.DomUtil.create('img', legendClassName, div);
+            var div = L.DomUtil.create('div', legendClassName, this._container);
+            var img = L.DomUtil.create('img', 'legendClassName', div);
             img.src = layer.options.legend;
             img.alt = layer.options.legend;
-            console.log(img.src);
             this._map.openPopup(
-                    img, 
+                    div, 
                     this._map.mouseEventToLatLng(e), 
-                    {autoPan: false, keepInView: true}
+                    {autoPan: true, keepInView: true, maxHeight: 200}
             );
         },
         _attachEvents: function() {
@@ -204,7 +267,7 @@
                 if (e) {
                     e.addEventListener('click', this._onLayerClick.bind(this));
                     // legend click event
-                    if (e.getElementsByClassName('leaflet-iconLayers-layerLegendIcon')) {
+                    if (e.getElementsByClassName('leaflet-iconLayers-layerLegendIcon')[0]) {
                         e.getElementsByClassName('leaflet-iconLayers-layerLegendIcon')[0]
                                 .addEventListener('click', this._onLegendClick.bind(this));
                     }
@@ -236,7 +299,12 @@
         },
         _render: function() {
             this._container.innerHTML = '';
-            this._createLayerElements();
+            if (this.options.multi === true) {
+                this._createMultiLayerElements();
+            } else {
+                this._createLayerElements();
+            }
+            
             this._attachEvents();
         },
         _switchMapLayers: function() {
@@ -257,13 +325,28 @@
                 this._map.addLayer(activeLayer.layer);
             }
         },
+        _switchMultiMapLayers: function() {
+            if (!this._map) {
+                return;
+            }
+            // removes all layers except those in array 
+            each(this._layers, function(layerObject) {
+                var layer = layerObject.layer;
+                if (this._selectedLayers.indexOf(layerObject.id) > -1) {
+                    this._map.addLayer(layer);
+                } else {
+                    this._map.removeLayer(layer);
+                }
+            }.bind(this));
+        },
         options: {
             position: 'bottomleft', // one of expanding directions depends on this
             behavior: 'previous', // may be 'previous', 'expanded' or 'first'
             expand: 'horizontal', // or 'vertical'
             autoZIndex: true, // from L.Control.Layers
             maxLayersInRow: 5,
-            manageLayers: true
+            manageLayers: true,
+            multi: false // true: handles overlays: several checks possible
         },
         initialize: function(layers, options) {
             if (!L.Util.isArray(arguments[0])) {
@@ -274,8 +357,19 @@
             L.setOptions(this, options);
             this._expandDirection = (this.options.position.indexOf('left') != -1) ? 'right' : 'left';
             if (this.options.manageLayers) {
-                this.on('activelayerchange', this._switchMapLayers, this);
+//                console.log(this.options);
+                // new multi mode: specific handlers to keep existing code
+                var evHandler =  this._switchMapLayers;
+                if (this.options.multi === true) {
+                    evHandler = this._switchMultiMapLayers;
+                    // forces nochange behavior
+                    this.options.behavior = 'nochange';
+                }
+                this.on('activelayerchange', evHandler, this);
             }
+            
+            // multi management:
+            this._selectedLayers = [];
             this.setLayers(layers);
         },
         onAdd: function(map) {
@@ -284,7 +378,11 @@
             this._render();
             map.on('click', this.collapse, this);
             if (this.options.manageLayers) {
-                this._switchMapLayers();
+                if ( this.options.multi === true) {
+                    this._switchMultiMapLayers();
+                } else {
+                    this._switchMapLayers();
+                }
             }
             return this._container;
         },
@@ -298,7 +396,15 @@
                 this._layers[id] = L.extend(layer, {
                     id: id
                 });
+//                console.log('treating id: ' + id);
+                
+                // multi management: all layers selected by default: todo: config to select layers
+                if (this.options.multi === true) {
+                    this._selectedLayers.push(id);
+                }
             }.bind(this));
+            
+            console.log('Adding layers: ' + this._selectedLayers.join(', '));
             if (this._container) {
                 this._render();
             }
