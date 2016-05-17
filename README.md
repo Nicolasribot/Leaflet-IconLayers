@@ -4,7 +4,7 @@
 
 ![](demo-multi1.gif)
 
-Leaflet base **and overlay** layers switching control with icons ([original plugin example](https://scanex.github.com/Leaflet-IconLayers/examples) [more examples](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
+Leaflet base **and overlay** layers switching control with icons ([original plugin example](https://scanex.github.com/Leaflet-IconLayers/examples), [more examples](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
 Displays layers icon and legend directly from WMS server if used with leaflet.wms (fork)
 
