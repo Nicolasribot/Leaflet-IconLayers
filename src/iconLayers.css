@@ -93,3 +93,16 @@
 .leaflet-iconLayers-layerLegend { overflow: scroll; }
 
 .leaflet-popup-content { width:auto !important; }
+
+/*D&D effects*/
+.leaflet-iconLayers-layerCell.over {
+    transform: scale(1.2);
+}
+
+.leaflet-iconLayers-layerCell.moving {
+  /*opacity: 0.85;*/
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+}
