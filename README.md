@@ -4,9 +4,9 @@
 
 ![](demo-multi1.gif)
 
-Leaflet base **and overlay** layers switching control with icons ([example](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
+Leaflet base **and overlay** layers switching control with icons ([original plugin example](https://scanex.github.com/Leaflet-IconLayers/examples), [more examples](https://Nicolasribot.github.com/Leaflet-IconLayers/examples))
 
-Displays layer icon and legend directly from WMS server if used with leaflet.wms (fork)
+New: Displays layers icon and legend directly from WMS server if used with leaflet.wms (fork)
 
 *Requires Leaflet 0.7.3 or newer; IE9+*
 
@@ -43,7 +43,7 @@ The second constructor argument may be `options` hash. It is also ok if it is th
 - `maxLayersInRow` - the number of layers, that a row can contain
 - `manageLayers` - by default control manages map layers. Pass `false` if you want to manage layers manually.
 - `multi` - Multiple selection mode. Pass `true` if you want to manage overlay layers: multi-selection of layers with fixed layers positions in the component. Default to `false`
-- `behavior` - the behavior controlling layers display. `previous` (default): previous layer is always displayed. `nochange`: layers are not reordered and displayed in the defined order. (Default mode if `multi=true`)
+- `behavior` - the behavior controlling layers display. `previous` (default): previous layer is always displayed. `reorder`: layers can be reordered by D&D (to come...) and displayed in the defined order. (Default mode if `multi=true`)
 - `theme` - the layer icon background color. Default to '#FFF'. Pass `'transparent'` to remove background. (useful for layers with transparent icons, like WMS layers)
 
 plus `L.Control` options (`position`)
