@@ -163,6 +163,7 @@
             return el;
         },
         _createLayerElements: function () {
+//            console.log('creating multiLayerElems');
             var currentRow, layerCell;
             var layers = this._arrangeLayers();
             var activeLayerId = this._getActiveLayer() && this._getActiveLayer().id;
@@ -199,7 +200,6 @@
             }
         },
         _createMultiLayerElements: function () {
-//            console.log('creating multiLayerElems');
             var layers = this._arrangeLayers();
             for (var i = 0; i < layers.length; i++) {
                 if (i % this.options.maxLayersInRow === 0) {
@@ -328,11 +328,11 @@
             for (var i = 0; i < layersRowCollection.length; i++) {
                 var el = layersRowCollection[i];
                 el.addEventListener('mouseenter', onMouseEnter);
-                el.addEventListener('mouseout', onMouseOut);
+                el.addEventListener('mouseleave', onMouseLeave);
                 el.addEventListener('mousemove', stopPropagation);
-                if (this.options.multi) {
+                if (this.options.multi === true) {
                     // to enable d&d on cells
-                    el.addEventListener('mouseleave', onMouseLeave);
+                    el.addEventListener('mouseout', onMouseOut);
                     el.addEventListener('mouseover', onMouseOver);
                 }
             }
@@ -401,6 +401,7 @@
             if (!this._map) {
                 return;
             }
+//            console.log('switching layers');
             var activeLayer = this._getActiveLayer();
             var previousLayer = this._getPreviousLayer();
             if (previousLayer) {
@@ -441,7 +442,7 @@
         },
         options: {
             position: 'bottomleft', // one of expanding directions depends on this
-            behavior: 'previous', // may be 'previous', 'expanded' or 'first'
+            behavior: 'previous', // may be 'previous', 'expanded', 'first' or 'reorder' (new)
             expand: 'horizontal', // or 'vertical'
             autoZIndex: true, // from L.Control.Layers
             maxLayersInRow: 5,
@@ -514,8 +515,8 @@
                 this._render();
             }
         },
+        // TODO: clean or separate in 2 methods if activeLayer property is not used in multi mode
         setActiveLayer: function (layer) {
-//            console.log('setActiveLayer called...');
             var l = layer && this._layers[L.stamp(layer)];
             if (this.options.multi === true ) {
                 if (this._container) {
@@ -525,12 +526,13 @@
                     layer: layer
                 });
             } else {
-                if (!l || (l.id === this._activeLayerId)) {
+                if (!l || l.id === this._activeLayerId) {
                     return;
                 }
-                if (l) {
-                    this._previousLayerId = this._activeLayerId;
-                    this._activeLayerId = l.id;
+                this._previousLayerId = this._activeLayerId;
+                this._activeLayerId = l.id;
+                if (this._container) {
+                    this._render();
                 }
                 this.fire('activelayerchange', {
                     layer: layer
@@ -538,7 +540,7 @@
             }
         },
         expand: function () {
-            var idx = this.options.multi ? 0 : 1;
+            var idx = this.options.multi === true ? 0 : 1;
             this._arrangeLayers().slice(idx).map(function (l) {
                 var el = this._getLayerCellByLayerId(l.id);
                 L.DomUtil.removeClass(el, 'leaflet-iconLayers-layerCell_hidden');
