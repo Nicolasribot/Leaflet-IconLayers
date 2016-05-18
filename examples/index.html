@@ -7,13 +7,13 @@
         <script type="text/javascript" src="providers-simple.js"></script>
         <script type="text/javascript" src="../src/iconLayers.js"></script>
         <!--Leaflet.WMS forked plugin TODO: rel to github -->
-        <script type="text/javascript" src="/leafletwms/leaflet.wms.js"></script>
-        <script type="text/javascript" src="/leafletwms/cors-proxy-demo.js"></script>
+        <script type="text/javascript" src="/leaflet.wms/leaflet.wms.js"></script>
+        <script type="text/javascript" src="/leaflet.wms/cors-proxy-demo.js"></script>
         <!--wms capabilities requires-->
-        <script type="text/javascript" src="/leafletwms/wms-capabilities.js"></script>
+        <script type="text/javascript" src="/leaflet.wms/wms-capabilities.js"></script>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
         <link rel="stylesheet" href="../src/iconLayers.css">
-        <link rel="stylesheet" href="/leafletwms/leaflet.wms.css">
+        <link rel="stylesheet" href="/leaflet.wms/leaflet.wms.css">
         <!--cors demo proxy-->
         <style>
             .exmap {
@@ -42,65 +42,65 @@
         <div id="map4" class="exmap"></div>
         <script>
 ////////////example 1 base layers ////////////////////////////////////////////////
-//            var map1 = L.map('map1').setView([38.14, 19.33], 7);
-//
-//            var layers1 = [];
-//            for (var providerId in providers) {
-//                layers1.push(providers[providerId]);
-//            }
-//
-//            layers1.push({
-//                layer: {
-//                    onAdd: function () {},
-//                    onRemove: function () {}
-//                },
-//                title: 'empty'
-//            });
-//            var ctrl1 = L.control.iconLayers(layers1).addTo(map1);
+            var map1 = L.map('map1').setView([38.14, 19.33], 7);
+
+            var layers1 = [];
+            for (var providerId in providers) {
+                layers1.push(providers[providerId]);
+            }
+
+            layers1.push({
+                layer: {
+                    onAdd: function () {},
+                    onRemove: function () {}
+                },
+                title: 'empty'
+            });
+            var ctrl1 = L.control.iconLayers(layers1).addTo(map1);
 
 ////////////example 2: overlays layers ///////////////////////////////////////////
             // code from Leaflet.com example page
-//            var map2 = L.map('map2').setView([51.505, -0.09], 13);
-//
-//            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
-//                maxZoom: 18,
-//                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-//                        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-//                        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-//                id: 'mapbox.streets'
-//            }).addTo(map2);
-//
-//            //TODO: layergroups for each caterogy, with several objects
-//            var layers2 = [];
-//            for (var providerId in providers_simple) {
-//                layers2.push(providers_simple[providerId]);
-//            }
-//
-//            var ctrl2 = L.control.iconLayers(layers2, {
-//                multi: true,
-//                position: 'bottomleft'
-//            }).addTo(map2);
+            var map2 = L.map('map2').setView([51.505, -0.09], 13);
+
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                id: 'mapbox.streets'
+            }).addTo(map2);
+
+            //TODO: layergroups for each caterogy, with several objects
+            var layers2 = [];
+            for (var providerId in providers_simple) {
+                layers2.push(providers_simple[providerId]);
+            }
+
+            var ctrl2 = L.control.iconLayers(layers2, {
+                multi: true,
+                position: 'bottomleft'
+            }).addTo(map2);
 
 ////////////example 3: overlays layers ///////////////////////////////////////////
-//            var map3 = L.map('map3', {crs: L.CRS.EPSG4326}).setView([38.14, 19.33], 7);
-//
-//            wmsSource3 = L.WMS.source(
-//                    "http://ows.terrestris.de/osm/service", // cors compatible
-//                    {
-//                        'format': 'image/png'
-//                    }
-//            );
-//            var ctrl3;
-//            wmsSource3.addTo(map3).loadFromWMS(function () {
-//                ctrl3 = L.control.iconLayers(this.getLayersForControl(), {
-//                    multi: true,
-//                    position: 'topright',
-//                    maxLayersInRow: 10,
-////                    theme: '#707070'
-////                    theme: 'transparent'
-//                    theme: '#A8A8A8'
-//                }).addTo(map3);
-//            });
+            var map3 = L.map('map3', {crs: L.CRS.EPSG4326}).setView([38.14, 19.33], 7);
+
+            wmsSource3 = L.WMS.source(
+                    "http://ows.terrestris.de/osm/service", // cors compatible
+                    {
+                        'format': 'image/png'
+                    }
+            );
+            var ctrl3;
+            wmsSource3.addTo(map3).loadFromWMS(function () {
+                ctrl3 = L.control.iconLayers(this.getLayersForControl(), {
+                    multi: true,
+                    position: 'topright',
+                    maxLayersInRow: 10,
+//                    theme: '#707070'
+//                    theme: 'transparent'
+                    theme: '#A8A8A8'
+                }).addTo(map3);
+            });
 
 //////////////example 4: Dual controls: base and overlays layers ///////////////////////////////////////////
             var map4 = L.map('map4').setView([45.14, 0.33], 7);
