@@ -150,8 +150,8 @@
                 el.appendChild(checkIconEl);
             }
             if (layerObj.icon) {
-                // new theme bg property
-                el.setAttribute('style', 'background-image: url(\'' + layerObj.icon + '\');'
+                // new theme bg property and images from preloaded array
+                el.setAttribute('style', 'background-image: url(\'' + this._iconImages[layerObj.title].src + '\');'
                         + 'background-color: ' + this.options.theme);
             }
             if (layerObj.options) {
@@ -494,6 +494,7 @@
         },
         setLayers: function (layers) {
             this._layers = {};
+            this._iconImages = {};
             var i = 0;
             layers.map(function (layer) {
                 var id = L.stamp(layer.layer);
@@ -504,6 +505,12 @@
                 });
 //                console.log('treating id: ' + id);
 
+                // TODO: test: preload icons (and legend)
+                if (layer.icon) {
+                    var img = new Image();
+                    img.src = layer.icon;
+                    this._iconImages[layer.title] = img;
+                }
                 // multi management: all layers selected by default: todo: config to select layers
                 if (this.options.multi === true) {
                     this._selectedLayers.push(id);
