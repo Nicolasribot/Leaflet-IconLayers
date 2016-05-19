@@ -150,8 +150,8 @@
                 el.appendChild(checkIconEl);
             }
             if (layerObj.icon) {
-                // new theme bg property and images from preloaded array
-                el.setAttribute('style', 'background-image: url(\'' + this._iconImages[layerObj.title].src + '\');'
+                // new theme bg property and images from preloaded array of base64 images (kudos to Gretti !)
+                el.setAttribute('style', 'background-image: url(\'' + this._iconImages[layerObj.id] + '\');'
                         + 'background-color: ' + this.options.theme);
             }
             if (layerObj.options) {
@@ -429,7 +429,7 @@
                 return this._layers[key];
             }.bind(this)).sort(function (a, b) {
                 return a.order < b.order;
-            }).reverse().map(function(layerObject) {
+            }).reverse().map(function (layerObject) {
                 var layer = layerObject.layer;
                 if (this._selectedLayers.indexOf(layerObject.id) > -1) {
 //                    console.log('adding layer: ' + layerObject.id);
@@ -439,6 +439,29 @@
                     this._map.removeLayer(layer);
                 }
             }.bind(this));
+        },
+        // converts images to base64 to avoid reloading each time
+        // FROM: http://stackoverflow.com/questions/6150289/how-to-convert-image-into-base64-string-using-javascript
+        // TODO: detect html5 ?
+        '_toDataUrl': function (url, callback, outputFormat) {
+            var img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function () {
+                var canvas = document.createElement('CANVAS');
+                var ctx = canvas.getContext('2d');
+                var dataURL;
+                canvas.height = this.height;
+                canvas.width = this.width;
+                ctx.drawImage(this, 0, 0);
+                dataURL = canvas.toDataURL(outputFormat);
+                callback(dataURL);
+                canvas = null;
+            };
+            img.src = url;
+        },
+        // refreshes the layer cells icons if possible
+        '_refreshIcon': function(layerId) {
+            
         },
         options: {
             position: 'bottomleft', // one of expanding directions depends on this
@@ -505,11 +528,20 @@
                 });
 //                console.log('treating id: ' + id);
 
-                // TODO: test: preload icons (and legend)
+                // preload icons (and legend)
+                // TODO: event to refresh UI once icons are loaded
                 if (layer.icon) {
-                    var img = new Image();
-                    img.src = layer.icon;
-                    this._iconImages[layer.title] = img;
+                    this._toDataUrl(layer.icon, function(base64Img){
+                        // Stores encoded image to avoid refresh of icons in WMS mode
+                        this._iconImages[id] = base64Img;
+                        // try to refresh div once image is loaded:
+//                        this._refreshIcon(id);
+                        if (this._getLayerCellByLayerId(id)) {
+                            this._getLayerCellByLayerId(id).setAttribute(
+                                    'style', 'background-image: url(\'' + this._iconImages[id] + '\');');
+                        }
+                    }.bind(this));
+                    
                 }
                 // multi management: all layers selected by default: todo: config to select layers
                 if (this.options.multi === true) {
@@ -525,7 +557,7 @@
         // TODO: clean or separate in 2 methods if activeLayer property is not used in multi mode
         setActiveLayer: function (layer) {
             var l = layer && this._layers[L.stamp(layer)];
-            if (this.options.multi === true ) {
+            if (this.options.multi === true) {
                 if (this._container) {
                     this._render();
                 }
